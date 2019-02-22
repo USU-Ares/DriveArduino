@@ -5,6 +5,8 @@
  * Email: derek.workman@aggiemail.usu.edu
  */
 
+#include <Servo.h>
+
 //Definitions
 //#define MOTOR_L_CONT 10   //Left motor control at pin 6 (For PWM)
 //#define MOTOR_L_STAT 9   //Left motor status at pin 9 (LOW = forward)
@@ -21,6 +23,9 @@
 #define TIMEOUT 1000 //data timeout at x milliseconds
 
 //Global Variables
+Servo sMOTOR_L_CONT[3];
+Servo sMOTOR_R_CONT[3];
+
 const uint8_t MOTOR_L_CONT[3] = {3, 5, 6};  //PWM pin assignments for left three motors
 const uint8_t MOTOR_R_CONT[3] = {9, 10, 11}; //PWM pin assignments for right three motors
 
@@ -157,19 +162,21 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600); //Serial port has baudrate of 9600
   
-  setPwmFrequency(3,256);// pins 3, 9, 10, and 11 have base frequency of 31250 Hz. Choosing 30 Hz as our desired frequency, 1042=31250Hz/30Hz
-  setPwmFrequency(9,256);
-  setPwmFrequency(10,256);
-  setPwmFrequency(11,256);
+  //setPwmFrequency(3,16);// pins 3, 9, 10, and 11 have base frequency of 31250 Hz. Choosing 30 Hz as our desired frequency, 16=490Hz/30Hz
+  //setPwmFrequency(9,16);
+  //setPwmFrequency(10,16);
+  //setPwmFrequency(11,16);
   
-  setPwmFrequency(5,1024);//pins 5 and 6 have a base frequency of 62500 Hz. Choosing 30 Hz as our desired frequency, 2084=62500Hz/30Hz 
-  setPwmFrequency(6,1024);
+  //setPwmFrequency(3,32);//pins 5 and 6 have a base frequency of 62500 Hz. Choosing 30 Hz as our desired frequency, 32=980Hz/30Hz 
+  //setPwmFrequency(3,32);
   
   for(byte i = 0; i < 3; i++) { 
     pinMode(MOTOR_L_CONT[i], OUTPUT); //Set motor pins as outputs
     //pinMode(MOTOR_L_STAT, OUTPUT);
     pinMode(MOTOR_R_CONT[i], OUTPUT);
     //pinMode(MOTOR_R_STAT, OUTPUT);
+    sMOTOR_L_CONT[i].attach(MOTOR_L_CONT[i]);
+    sMOTOR_R_CONT[i].attach(MOTOR_R_CONT[i]);
   }
 }
 
@@ -207,13 +214,15 @@ void loop() {
   if((data[DIR]&DIR_LEFT) == DIR_LEFT) {  //Update the direction for each motor
     for(byte i = 0; i < 3; i++) {
       //digitalWrite(MOTOR_L_STAT, HIGH);  //if in reverse
-      analogWrite(MOTOR_L_CONT[i], (0xbc - (data[ML]/4)));  //PWM polarity must also be reversed
+      //analogWrite(MOTOR_L_CONT[i], (0xbc - (data[ML]/4)));  //PWM polarity must also be reversed
+      sMOTOR_L_CONT[i].write(90);
     }
   }
   else {
     for(byte i = 0; i < 3; i++) {
       //digitalWrite(MOTOR_L_STAT, LOW);
       analogWrite(MOTOR_L_CONT[i], (0xbc + (data[ML]/4)));
+      sMOTOR_L_CONT[i].write(180);
     } 
   }
   if((data[DIR]&DIR_RIGHT) == DIR_RIGHT) {
