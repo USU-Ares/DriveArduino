@@ -115,28 +115,22 @@ void loop() {
   //PErform motor opperations (version 2)
   if((data[DIR]&DIR_LEFT) == DIR_LEFT) {  //Update the direction for each motor
     for(byte i = 0; i < 3; i++) {
-      //digitalWrite(MOTOR_L_STAT, HIGH);  //if in reverse
-      //analogWrite(MOTOR_L_CONT[i], (0xbc - (data[ML]/4)));  //PWM polarity must also be reversed
-      sMOTOR_L_CONT[i].write(90);
+      sMOTOR_L_CONT[i].write(90*(1-data[ML]/255));
     }
   }
   else {
     for(byte i = 0; i < 3; i++) {
-      //digitalWrite(MOTOR_L_STAT, LOW);
-      analogWrite(MOTOR_L_CONT[i], (0xbc + (data[ML]/4)));
-      sMOTOR_L_CONT[i].write(180);
+      sMOTOR_L_CONT[i].write(90*(1+data[ML]/255));
     } 
   }
   if((data[DIR]&DIR_RIGHT) == DIR_RIGHT) {
     for(byte i = 0; i < 3; i++) {
-      //digitalWrite(MOTOR_R_STAT, HIGH);
-      analogWrite(MOTOR_R_CONT[i], (0xbc - (data[MR]/4)));
+      sMOTOR_R_CONT[i].write(90*(1-data[MR]/255));
     }
   }
   else {
     for(byte i = 0; i < 3; i++) {
-      //digitalWrite(MOTOR_R_STAT, LOW);
-      analogWrite(MOTOR_R_CONT[i], (0xbc + (data[MR]/4)));
+      sMOTOR_R_CONT[i].write(90*(1+data[MR]/255));
     }
   }
 }
