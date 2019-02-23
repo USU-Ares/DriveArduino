@@ -9,6 +9,8 @@
 
 //Definitions
 
+#define SCALER 0.33 //scaler (0.0 < SCALER < 1.0)
+#define OFFSET 3.6 //offset to get true 1.5 ms high
 #define DIR 0 //index for motor direction byte in serial data
 #define ML  1 //index for left motor PWM value in serial data
 #define MR  2 //index for right motor PWM value in serial data
@@ -115,22 +117,22 @@ void loop() {
   //PErform motor opperations (version 2)
   if((data[DIR]&DIR_LEFT) == DIR_LEFT) {  //Update the direction for each motor
     for(byte i = 0; i < 3; i++) {
-      sMOTOR_L_CONT[i].write(90*(1-data[ML]/255));
+      sMOTOR_L_CONT[i].write(OFFSET + 90*(1.0-((float)data[ML])*SCALER/510.0));
     }
   }
   else {
     for(byte i = 0; i < 3; i++) {
-      sMOTOR_L_CONT[i].write(90*(1+data[ML]/255));
+      sMOTOR_L_CONT[i].write(OFFSET + 90*(1.0+((float)data[ML])*SCALER/510.0));
     } 
   }
   if((data[DIR]&DIR_RIGHT) == DIR_RIGHT) {
     for(byte i = 0; i < 3; i++) {
-      sMOTOR_R_CONT[i].write(90*(1-data[MR]/255));
+      sMOTOR_R_CONT[i].write(OFFSET + 90*(1.0+((float)data[MR])*SCALER/510.0));
     }
   }
   else {
     for(byte i = 0; i < 3; i++) {
-      sMOTOR_R_CONT[i].write(90*(1+data[MR]/255));
+      sMOTOR_R_CONT[i].write(OFFSET + 90*(1.0-((float)data[MR])*SCALER/510.0));
     }
   }
 }
